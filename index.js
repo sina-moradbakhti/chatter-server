@@ -1,19 +1,26 @@
 const app = require('express')()
 const http = require('http').createServer(app)
 const io = require('socket.io')(http);
+const PORT = process.env.PORT || 6161;
 
 app.get('/', (req, res) => {
-    res.send("Node Server is running. Yay!!")
+    res.send("Node Server is running. Yay!! " + PORT)
 })
 
 io.on('connection', socket => {
     //Get the chatID of the user and join in a room of the same chatID
-    chatID = socket.handshake.query.chatID
-    socket.join(chatID)
+    console.log('A new user connected.', socket.handshake.headers);
+    chatID = socket.handshake.query.chatID;
+    socket.join(chatID);
+
+    socket.on('/test', function(msg) {
+        console.log(msg);
+    });
 
     //Leave the room if the user closes the socket
     socket.on('disconnect', () => {
-        socket.leave(chatID)
+        socket.leave(chatID);
+        console.log('user disconnected.');
     })
 
     //Send message to only a particular user
@@ -31,6 +38,5 @@ io.on('connection', socket => {
     })
 });
 
-const PORT = process.env.PORT;
 http.listen(PORT)
 console.log(`Server is listening on port ${PORT}`);
