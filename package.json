@@ -11,7 +11,8 @@
     "dependencies": {
         "express": "^4.17.1",
         "http": "0.0.1-security",
+        "mysql": "^2.18.1",
         "nodemon": "^2.0.11",
-        "socket.io": "^2.3.0"
+        "socket.io": "^2.4.1"
     }
 }
