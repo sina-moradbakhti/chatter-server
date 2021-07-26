@@ -22,13 +22,12 @@ io.on('connection', socket => {
         connected_socket_users.push(new socket_user_model.SocketUserObject(socket.handshake, client_id));
         console.log("SOCKETS ====> ", connected_socket_users);
     }
-    chatID = socket.handshake.query.chatID;
-    socket.join(chatID);
+    socket.join(socket.id);
     /* Join User */
 
     /* Left User */
     socket.on('disconnect', () => {
-        socket.leave(chatID);
+        socket.leave(socket.id);
         const client_id = socket.conn.id;
 
         var find = connected_socket_users.findIndex(item => item.client_id === client_id);
@@ -43,15 +42,15 @@ io.on('connection', socket => {
 
     /* Get All Clients */
     socket.on('/clients/get/all', function(data) {
-        chatID = socket.handshake.query.chatID;
-        io.to(chatID).emit('clients_get_all', JSON.stringify(connected_socket_users));
+        io.to(socket.id).emit('clients_get_all', JSON.stringify(connected_socket_users));
     });
     /* Get All Clients */
 
     /* Send Point to point message */
     socket.on('/send_p2p_message', function(data) {
         let p2pMessage = new socket_p2p_data_model.P2pSocketData(data);
-        socket.to(p2pMessage.socket_id_to).emit('p2p_message', p2pMessage.socket_id_from, p2pMessage.toJson());
+        io.to(p2pMessage.socket_id_to).emit('p2p_message', p2pMessage.toJson());
+        //socket.to(p2pMessage.socket_id_to).emit('p2p_message', p2pMessage.socket_id_from, p2pMessage.toJson());
     });
     /* Send Point to point message */
 
